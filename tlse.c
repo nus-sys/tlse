@@ -7201,6 +7201,8 @@ int tls_parse_certificate(struct TLSContext *context, const unsigned char *buf, 
         int res2 = res;
         unsigned int remaining = certificate_size;
         do {
+            // Check res2 so that it never becomes larger than the input buffer
+            CHECK_SIZE(res2, buf_len, TLS_NEED_MORE_DATA)
             if (remaining <= 3)
                 break;
             certificates_in_chain++;
@@ -7280,7 +7282,7 @@ int tls_parse_certificate(struct TLSContext *context, const unsigned char *buf, 
                     // ignore extensions
                     remaining -= 2;
                     unsigned short size = ntohs(*(unsigned short *)&buf[res2]);
-                    if ((size) && (size >= remaining)) {
+                    if ((size) && (size <= remaining)) {
                         res2 += size;
                         remaining -= size;
                     }
@@ -10621,21 +10623,21 @@ int tls_is_stun(const unsigned char *msg, int len) {
 }
 
 uint32_t _private_tls_crc32(const unsigned char *s, int n) {
-	uint32_t crc = 0xFFFFFFFF;
-	int i;
+    uint32_t crc = 0xFFFFFFFF;
+    int i;
     int j;
 
-	for (i = 0; i < n; i++) {
-		char ch = s[i];
-		for (j = 0; j < 8; j ++) {
-			uint32_t b = (ch ^ crc) & 1;
-			crc >>= 1;
-			if (b)
+    for (i = 0; i < n; i++) {
+        char ch = s[i];
+        for (j = 0; j < 8; j ++) {
+            uint32_t b = (ch ^ crc) & 1;
+            crc >>= 1;
+            if (b)
                 crc=crc^0xEDB88320;
-			ch >>= 1;
-		}
-	}
-	return ~crc;
+            ch >>= 1;
+        }
+    }
+    return ~crc;
 }
 
 int tls_stun_parse(unsigned char *msg, int len, char *pwd, int pwd_len, unsigned char is_ipv6, unsigned char *addr, unsigned int port, unsigned char *response_buffer) {
