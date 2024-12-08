@@ -15,8 +15,8 @@ use tlse::{
 
 fn main() {
     let server_context = unsafe { tls_create_context(1, TLS_V12 as _) };
-    let cert_file = var("CERT_FILE").unwrap_or("/usr/local/tls/svr.crt".into());
-    let key_file = var("KEY_FILE").unwrap_or("/usr/local/tls/svr.key".into());
+    let cert_file = var("CERT_FILE").unwrap_or("./examples/cert/server.crt".into());
+    let key_file = var("KEY_FILE").unwrap_or("./examples/cert/server.key".into());
     let cert = read(cert_file).expect("can read certificate file");
     unsafe { tls_load_certificates(server_context, cert.as_ptr(), cert.len() as _) };
     let key = read(key_file).expect("can read key file");

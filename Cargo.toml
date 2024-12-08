@@ -8,3 +8,11 @@ edition = "2021"
 [build-dependencies]
 bindgen = "0.70.1"
 cc = "1.2.2"
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "bench_export"
+path = "benches/bench_export.rs"
+harness = false
