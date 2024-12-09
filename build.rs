@@ -7,6 +7,7 @@ fn main() {
         .define("TLS_REEXPORTABLE", None)
         .define("NO_TLS_LEGACY_SUPPORT", None)
         .define("NO_SSL_COMPATIBLE_INTERFACE", None)
+        .define("LTC_NO_TABLES", "1")
         .cargo_warnings(false)
         .compile("tlse");
 
