@@ -4,7 +4,7 @@ use tlse::{
     tls_accept, tls_buffer_clear, tls_client_connect, tls_consume_stream, tls_create_context,
     tls_destroy_context, tls_established, tls_export_context, tls_get_write_buffer,
     tls_import_context, tls_load_certificates, tls_load_private_key, tls_make_exportable,
-    TLSContext, TLS_V13,
+    TLSContext, TLS_V12,
 };
 
 fn create_connection_context() -> *mut TLSContext {
@@ -12,11 +12,11 @@ fn create_connection_context() -> *mut TLSContext {
     let cert = read(cert_file).expect("can read certificate file");
     let key_file = var("KEY_FILE").unwrap_or("./examples/cert/server.key".into());
     let key = read(key_file).expect("can read key file");
-    let server_context = unsafe { tls_create_context(1, TLS_V13 as _) };
+    let server_context = unsafe { tls_create_context(1, TLS_V12 as _) };
     unsafe { tls_load_certificates(server_context, cert.as_ptr(), cert.len() as _) };
     unsafe { tls_load_private_key(server_context, key.as_ptr(), key.len() as _) };
 
-    let client_context = unsafe { tls_create_context(0, TLS_V13 as _) };
+    let client_context = unsafe { tls_create_context(0, TLS_V12 as _) };
     unsafe { tls_client_connect(client_context) };
 
     let context = unsafe { tls_accept(server_context) };
